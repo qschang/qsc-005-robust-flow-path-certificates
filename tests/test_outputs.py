@@ -24,9 +24,11 @@ def test_unreachable_sink_returns_null_certificates():
 def test_rejects_negative_cycle_atomically():
   """VALID-03: "A negative-cost cycle reachable from source is invalid."""
   a=base(); a['edges'] += [{'u':'s','v':'a','capacity':1,'cost':0},{'u':'a','v':'s','capacity':1,'cost':-2}]; r,b,_,leftovers=run(a); assert r.returncode!=0 and b is None and leftovers == [] and all(x not in leftovers for x in ['report.json','ledger.json','summary.json','checkpoint'])
+  assert not any((Path(name).name in {'report.json','ledger.json','summary.json','checkpoint'}) for name in leftovers)
 def test_late_invalid_edge_preserves_sentinel():
   """VALID-03: "must not create or modify the destination" on a late malformed edge."""
   a=base(); a['edges'].append({'u':'x','v':'t','capacity':1,'cost':0}); sent=b'keep'; r,b,s,leftovers=run(a,sent); assert r.returncode!=0 and b==s and leftovers == [] and all(x not in leftovers for x in ['report.json','ledger.json','summary.json','checkpoint'])
+  assert not any((Path(name).name in {'report.json','ledger.json','summary.json','checkpoint'}) for name in leftovers)
 def test_node_order_only_changes_sorted_projection():
   """CERT-04: "source_side ... is sorted in the input node order."""
   a=base(); b=dict(a); b['nodes']=['t','b','a','s']; x=json.loads(run(a)[1]); y=json.loads(run(b)[1]); assert x['max_flow']==y['max_flow'] and y['source_side']==['a','s']
@@ -39,6 +41,7 @@ def test_zero_capacity_edges_are_ignored():
 def test_invalid_boolean_capacity_rejected():
   """VALID-03: "booleans are not numbers."""
   a=base(); a['edges'][0]['capacity']=True; r,b,_,leftovers=run(a); assert r.returncode!=0 and b is None and leftovers == [] and all(x not in leftovers for x in ['report.json','ledger.json','summary.json','checkpoint'])
+  assert not any((Path(name).name in {'report.json','ledger.json','summary.json','checkpoint'}) for name in leftovers)
 def test_output_has_exact_public_keys():
   """CERT-04: "Return an object with exactly max_flow, min_cut_capacity, source_side, shortest_path_cost, and shortest_path."""
   x=json.loads(run(base())[1]); assert set(x)=={'max_flow','min_cut_capacity','source_side','shortest_path_cost','shortest_path'}
