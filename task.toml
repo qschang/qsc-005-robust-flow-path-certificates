@@ -1,0 +1,27 @@
+schema_version = "1.3"
+
+[task]
+name = "qsc/robust-flow-path-certificates"
+description = "Produce auditable flow, cut, and signed-cost path certificates for directed multigraphs with residual reversals, degenerate edges, and strict rejection semantics."
+authors = [{ name = "QSC" }]
+keywords = ["directed-multigraph", "max-flow-min-cut", "negative-cost-paths", "certificate-validation", "atomic-output"]
+
+[agent]
+timeout_sec = 3600
+
+[environment]
+build_timeout_sec = 900
+cpus = 1
+memory_mb = 2048
+storage_mb = 4096
+gpus = 0
+allow_internet = true
+
+[verifier]
+timeout_sec = 300
+
+[metadata]
+difficulty = "expert"
+category = "H.1 数学问题"
+tags = ["图不变量", "残量网络", "负权路径", "原子发布"]
+expert_time_estimate = "12h"

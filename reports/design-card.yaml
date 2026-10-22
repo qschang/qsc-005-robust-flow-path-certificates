@@ -1,0 +1,30 @@
+task_id: qsc-002
+title: capacitated-network-certificates
+primary_form_type: H.1 数学问题
+primary_leaf: MA-08
+secondary_leaves: [MA-01, MA-06]
+category_rationale: 最大流最小割不变量、负权路径与多重图语义是决定正确性的核心数学推理。
+data_provenance: Synthetic graph cases are generated in tests with fixed hand-authored structures; no real telemetry or public benchmark instance is claimed.
+originality_checks: Compared against MA-08 used_topics.yaml (empty), existing publish packages, and local task names; this is a fresh certificate-producing contract.
+expected_result_rationale: Exhaustive simple-path enumeration and independent cut enumeration validate small cases; flow conservation and cut equality provide an invariant.
+challenges:
+  - id: FLOW-01
+    reasoning_failure: Collapsing parallel edges or mishandling residual reverse arcs changes feasible flow and cut capacity.
+    observable_symptom: max_flow disagrees with an independently enumerated cut or source-side reachability.
+    test_ids: [test_parallel_edges_and_cut_certificate, test_self_loop_is_neutral_to_flow_and_path, test_zero_capacity_edges_are_ignored]
+    independent_validation: Enumerate all source/sink cuts on small graphs and sum each original edge separately.
+  - id: PATH-02
+    reasoning_failure: Assuming nonnegative costs or using unstable tie handling produces the wrong path under negative edges or equal costs.
+    observable_symptom: shortest_path_cost or lexicographic path differs from exhaustive simple-path enumeration.
+    test_ids: [test_negative_cost_path_and_lexicographic_tie_break, test_unreachable_sink_returns_null_certificates]
+    independent_validation: Enumerate all simple paths and compare cost then node tuple ordering.
+  - id: VALID-03
+    reasoning_failure: Publishing before complete validation leaks prefixes or accepts a reachable negative cycle.
+    observable_symptom: nonzero exit is missing, or destination bytes change on rejection.
+    test_ids: [test_rejects_negative_cycle_atomically, test_late_invalid_edge_preserves_sentinel, test_invalid_boolean_capacity_rejected]
+    independent_validation: Run absent-destination and sentinel-preservation cases, including late malformed records.
+  - id: CERT-04
+    reasoning_failure: Treating node order as graph semantics or omitting disconnected vertices corrupts the public certificate projection.
+    observable_symptom: values change under node permutation or output keys/source_side order violate the contract.
+    test_ids: [test_node_order_only_changes_sorted_projection, test_flow_cut_values_match_on_disconnected_components, test_output_has_exact_public_keys]
+    independent_validation: Compare isomorphic inputs and independently verify exact key sets and order projections.
