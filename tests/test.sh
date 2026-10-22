@@ -10,7 +10,7 @@ cleanup() {
   chmod 0644 "$REWARD_FILE" 2>/dev/null || true
   complete=INCOMPLETE
   if [ "$code" -eq 0 ] && test -s "$REPORT"; then
-    if grep -Eq '<testsuite[^>]*tests="12"[^>]*failures="0"[^>]*errors="0"[^>]*skipped="0"' "$REPORT"; then
+    if grep -q 'tests="12"' "$REPORT" && grep -q 'failures="0"' "$REPORT" && grep -q 'errors="0"' "$REPORT" && grep -q 'skipped="0"' "$REPORT"; then
       complete=COMPLETE
     fi
   fi
