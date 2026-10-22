@@ -25,10 +25,6 @@ PY
   chmod 0444 "$REWARD_FILE" 2>/dev/null || true
   exit "$code"
 }
-trap cleanup EXIT INT TERM HUP`r`npython3 -m pip install --no-cache-dir --disable-pip-version-check pytest==8.4.2
-# The XML report is the completion proof; a missing or malformed report stays INCOMPLETE.
+trap cleanup EXIT INT TERM HUP
+python3 -m pip install --no-cache-dir --disable-pip-version-check pytest==8.4.2
 timeout 240s python3 -m pytest -q "$(dirname "$0")/test_contract.py" --junitxml="$REPORT"
-
-
-
-
