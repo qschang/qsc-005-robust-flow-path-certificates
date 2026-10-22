@@ -10,16 +10,9 @@ cleanup() {
   chmod 0644 "$REWARD_FILE" 2>/dev/null || true
   complete=INCOMPLETE
   if [ "$code" -eq 0 ] && test -s "$REPORT"; then
-    complete=COMPLETE
-    python3 - "$REPORT" <<'PY'
-import sys
-import xml.etree.ElementTree as ElementTree
-root = ElementTree.parse(sys.argv[1]).getroot()
-assert root.attrib.get("tests") == "12"
-assert root.attrib.get("failures", "0") == "0"
-assert root.attrib.get("errors", "0") == "0"
-assert root.attrib.get("skipped", "0") == "0"
-PY
+    if grep -Eq '<testsuite[^>]*tests="12"[^>]*failures="0"[^>]*errors="0"[^>]*skipped="0"' "$REPORT"; then
+      complete=COMPLETE
+    fi
   fi
   if [ "$complete" = COMPLETE ]; then printf '1.000\n' > "$REWARD_FILE"; else printf '0.000\n' > "$REWARD_FILE"; fi
   chmod 0444 "$REWARD_FILE" 2>/dev/null || true
