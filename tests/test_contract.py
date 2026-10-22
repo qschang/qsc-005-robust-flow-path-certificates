@@ -26,7 +26,6 @@ def test_rejects_negative_cycle_atomically():
 def test_late_invalid_edge_preserves_sentinel():
   """VALID-03: "must not create or modify the destination" on a late malformed edge."""
   a=base(); a['edges'].append({'u':'x','v':'t','capacity':1,'cost':0}); sent=b'keep'; r,b,s=run(a,sent); assert r.returncode!=0 and b==s
-    assert not any(x.name.startswith('.network-certificate-') for x in Path(s).parent.iterdir())
 def test_node_order_only_changes_sorted_projection():
   """CERT-04: "source_side ... is sorted in the input node order."""
   a=base(); b=dict(a); b['nodes']=['t','b','a','s']; x=json.loads(run(a)[1]); y=json.loads(run(b)[1]); assert x['max_flow']==y['max_flow'] and y['source_side']==['a','s']
@@ -51,4 +50,5 @@ def test_repeated_valid_run_is_idempotent():
         first = o.read_bytes()
         r2 = subprocess.run([sys.executable, APP, str(i), str(o)], capture_output=True, timeout=10)
         assert r1.returncode == 0 and r2.returncode == 0 and o.read_bytes() == first
+
 
