@@ -20,4 +20,4 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM HUP
 python3 -m pip install --no-cache-dir --disable-pip-version-check pytest==8.4.2
-timeout 240s python3 -m pytest -q "$(dirname "$0")/test_contract.py" --junitxml="$REPORT"
+timeout 240s python3 -m pytest -q "$(dirname "$0")/test_outputs.py" --junitxml="$REPORT"
