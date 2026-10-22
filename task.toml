@@ -7,7 +7,7 @@ authors = [{ name = "QSC" }]
 keywords = ["directed-multigraph", "max-flow-min-cut", "negative-cost-paths", "certificate-validation", "atomic-output"]
 
 [agent]
-timeout_sec = 3600
+timeout_sec = 1800
 
 [environment]
 build_timeout_sec = 900
@@ -25,4 +25,5 @@ difficulty = "expert"
 category = "H.1 Mathematics"
 tags = ["graph-invariants", "residual-network", "negative-cost-path", "atomic-publication"]
 expert_time_estimate = "12h"
+
 
