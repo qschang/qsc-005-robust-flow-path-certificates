@@ -15,7 +15,7 @@ cleanup() {
 import sys
 import xml.etree.ElementTree as ElementTree
 root = ElementTree.parse(sys.argv[1]).getroot()
-assert root.attrib.get("tests") == "11"
+assert root.attrib.get("tests") == "12"
 assert root.attrib.get("failures", "0") == "0"
 assert root.attrib.get("errors", "0") == "0"
 assert root.attrib.get("skipped", "0") == "0"
@@ -28,3 +28,4 @@ PY
 trap cleanup EXIT INT TERM HUP
 # The XML report is the completion proof; a missing or malformed report stays INCOMPLETE.
 timeout 240s python3 -m pytest -q "$(dirname "$0")/test_contract.py" --junitxml="$REPORT"
+
