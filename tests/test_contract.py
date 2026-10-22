@@ -41,3 +41,12 @@ def test_invalid_boolean_capacity_rejected():
 def test_output_has_exact_public_keys():
   """CERT-04: "Return an object with exactly max_flow, min_cut_capacity, source_side, shortest_path_cost, and shortest_path."""
   x=json.loads(run(base())[1]); assert set(x)=={'max_flow','min_cut_capacity','source_side','shortest_path_cost','shortest_path'}
+
+def test_repeated_valid_run_is_idempotent():
+    """VALID-03: "Publish output only after validation and all computations complete."""
+    with tempfile.TemporaryDirectory() as td:
+        p = Path(td); i = p/'i.json'; o = p/'o.json'; i.write_text(json.dumps(base()), encoding='utf-8')
+        r1 = subprocess.run([sys.executable, APP, str(i), str(o)], capture_output=True, timeout=10)
+        first = o.read_bytes()
+        r2 = subprocess.run([sys.executable, APP, str(i), str(o)], capture_output=True, timeout=10)
+        assert r1.returncode == 0 and r2.returncode == 0 and o.read_bytes() == first
