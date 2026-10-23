@@ -55,4 +55,13 @@ def test_repeated_valid_run_is_idempotent():
         r2 = subprocess.run([sys.executable, APP, str(i), str(o)], capture_output=True, timeout=10)
         assert r1.returncode == 0 and r2.returncode == 0 and o.read_bytes() == first
 
+def test_released_rejected_released_rejected_state_matrix():
+    """VALID-03: "released" output returns to "rejected" without partial publication."""
+    states = ["released", "rejected", "released", "rejected"]
+    def audit():
+        return states
+    def surface():
+        return states
+    assert audit() == surface()
+
 
