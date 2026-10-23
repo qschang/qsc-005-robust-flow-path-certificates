@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "metric": "weighted_behavior",
+  "groups": [
+    {"id": "flow", "weight": 0.30, "tests": ["test_parallel_edges_and_cut_certificate", "test_self_loop_is_neutral_to_flow_and_path", "test_flow_cut_values_match_on_disconnected_components", "test_zero_capacity_edges_are_ignored"]},
+    {"id": "path", "weight": 0.20, "tests": ["test_negative_cost_path_and_lexicographic_tie_break", "test_unreachable_sink_returns_null_certificates"]},
+    {"id": "validation", "weight": 0.25, "tests": ["test_rejects_negative_cycle_atomically", "test_late_invalid_edge_preserves_sentinel", "test_invalid_boolean_capacity_rejected"]},
+    {"id": "determinism", "weight": 0.15, "tests": ["test_node_order_only_changes_sorted_projection", "test_repeated_valid_run_is_idempotent"]},
+    {"id": "schema", "weight": 0.10, "tests": ["test_output_has_exact_public_keys", "test_released_rejected_released_rejected_state_matrix"]}
+  ],
+  "gate": {"required_total_tests": 13, "allow_skipped": false, "allow_xfailed": false, "allow_errors": false}
+}
