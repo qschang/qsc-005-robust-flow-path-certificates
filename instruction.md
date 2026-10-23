@@ -1,13 +1,13 @@
-# Robust flow and path certificates
+# 有向多重图的流量与路径证书
 
-Implement `/app/solve.py` so it reads UTF-8 JSON from the first command-line path and atomically writes UTF-8 JSON to the second path.
+请实现 `/app/solve.py`：从第一个命令行参数指定的文件读取 UTF-8 JSON，并把 UTF-8 JSON 原子写入第二个命令行参数指定的文件。
 
-The input object has exactly `nodes`, `edges`, `source`, and `sink`. Nodes are unique non-empty strings; terminals are distinct existing nodes. Each edge has exactly `u`, `v`, `capacity`, and `cost`; endpoints exist, capacities are finite numbers ≥ 0, costs are finite numbers, parallel edges and self-loops are allowed, and booleans are not numbers. A negative-cost cycle reachable from `source` invalidates the input.
+输入对象必须且只能包含 `nodes`、`edges`、`source`、`sink` 四个字段。`nodes` 是互不重复的非空字符串；`source` 与 `sink` 必须不同且都存在于节点集合中。每条边必须且只能包含 `u`、`v`、`capacity`、`cost` 四个字段；端点必须存在，`capacity` 必须是有限且大于等于 0 的数字，`cost` 必须是有限数字，布尔值不属于数字。允许平行边和自环。若从 `source` 可到达一个负成本环，必须拒绝该输入。
 
-The instance is a directed multigraph: preserve edge multiplicity as a collection of independent resources, reason about the residual-capacity boundary and its induced cut set, and retain finite numeric precision when comparing the two certificates. Validation and publication are separate state transitions: a late rejection must be atomic, leave no temporary or report artifact, and a repeated accepted run must be idempotent.
+图是有向多重图：平行边是彼此独立的资源。请正确处理残量容量边界及其诱导的割，并在比较两个证书时保留有限数值精度。输入校验和结果发布是两个独立阶段：晚到的拒收必须保持原子性，不能创建临时文件或报告文件；重复提交同一合法输入必须保持幂等。
 
-Return exactly `max_flow`, `min_cut_capacity`, `source_side`, `shortest_path_cost`, and `shortest_path`. Treat parallel edges as separate resources. The flow value and the cut induced by `source_side` must agree within 1e-9 relative and 1e-12 absolute error. `source_side` is the set reachable from `source` by positive residual capacity after the reported flow, listed in input node order. The path is a simple node sequence from source to sink and its cost is the sum of its original edge costs. If no path exists, both path fields are null. Equal-cost paths use the lexicographically smallest node sequence. Self-loops do not affect either certificate.
+成功时必须恰好返回 `max_flow`、`min_cut_capacity`、`source_side`、`shortest_path_cost`、`shortest_path` 五个字段。平行边必须分别计入。`max_flow` 与由 `source_side` 诱导的割容量必须满足相对误差 1e-9、绝对误差 1e-12 的约束。`source_side` 是报告流量完成后沿正残量容量从 `source` 可达的节点集合，并按输入节点顺序列出。路径必须是从 `source` 到 `sink` 的简单节点序列，路径成本是原始边成本之和；不存在路径时，两个路径字段都必须为 `null`。成本相同的路径取节点序列按字典序最小者。自环不影响流量证书或路径证书。
 
-On malformed input, a reachable negative-cost cycle, certificate disagreement, or internal error, exit nonzero and leave the destination absent or byte-for-byte unchanged. Do not create report, ledger, summary, checkpoint, or temporary files for a rejected request. Publish output only after validation and all computations complete.
+对于格式错误、可达负成本环、证书不一致或内部错误，程序必须以非零状态退出，并且目标文件要么不存在，要么逐字节保持原样。拒收请求不得创建报告、流水、汇总、检查点或临时文件。只有全部校验和计算完成后才能发布结果。
 
-An accepted publication is released; a rejected request remains rejected and must not transition the prior released bytes into a partial state.
+合法发布代表一次完成的交付；拒收请求必须保持拒收状态，不能把之前已经发布的文件变成半成品。
