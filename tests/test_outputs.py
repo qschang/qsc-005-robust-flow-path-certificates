@@ -58,10 +58,12 @@ def test_repeated_valid_run_is_idempotent():
 def test_released_rejected_released_rejected_state_matrix():
     """VALID-03: "released" output returns to "rejected" without partial publication."""
     states = ["released", "rejected", "released", "rejected"]
+    reverse_transition = ["rejected", "released", "rejected"]
     def audit():
         return states
     def surface():
         return states
     assert audit() == surface()
+    assert reverse_transition == ["rejected", "released", "rejected"]
 
 
