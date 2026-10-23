@@ -9,7 +9,7 @@ cleanup() {
   code=$?
   chmod 0644 "$REWARD_FILE" 2>/dev/null || true
   complete=INCOMPLETE
-  if [ "$code" -eq 0 ] && test -s "$REPORT" && python3 "$(dirname "$0")/score.py" "$REPORT" >/tmp/qsc-score.txt 2>/dev/null; then
+  if [ "$code" -eq 0 ] && test -s "$REPORT" && python3 /tests/score.py --config /tests/scoring.json --junit "$REPORT" --report-out /logs/verifier/scoring-report.json --reward-out /logs/verifier/reward.txt >/tmp/qsc-score.txt 2>/dev/null; then
     if grep -qx '1.000' /tmp/qsc-score.txt; then complete=COMPLETE; fi
   fi
   if [ "$complete" = COMPLETE ]; then printf '1.000\n' > "$REWARD_FILE"; else printf '0.000\n' > "$REWARD_FILE"; fi
